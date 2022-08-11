@@ -1,0 +1,63 @@
+version: "3.7"
+
+services:
+    app:
+        container_name: laravel-9-2
+        build:
+            context: .
+            dockerfile: Dockerfile
+        image: laravel:9.1.0
+        restart: unless-stopped
+        working_dir: /var/www/
+        volumes:
+            - ./:/var/www
+        depends_on: 
+            - redis
+        networks: 
+            - laravel-9-1
+    
+    nginx:
+        container_name: nginx-2
+        image: nginx:alpine
+        restart: unless-stopped
+        ports: 
+            - "8989:80"
+        volumes: 
+            - ./:/var/www
+            - ./docker/nginx/:/etc/nginx/conf.d/
+        networks: 
+            - laravel-9-1
+
+    mysql:
+        container_name: mysql-2
+        image: mysql:5.7.22
+        restart: unless-stopped
+        environment: 
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: laravel
+            MYSQL_USER: root
+            MYSQL_PASSWORD: changeme
+        volumes: 
+            - ./.docker/mysql/dbdata:/var/lib/mysql
+        ports: 
+            - "3306:3306"
+        networks: 
+            - laravel-9-1
+    
+    adminer:
+        container_name: adminer-2
+        image: adminer
+        ports:
+        - 8080:8080
+        networks:
+        - laravel-9-1
+
+    redis:
+        container_name: redis-2
+        image: redis:latest
+        networks: 
+            - laravel-9-1
+
+networks: 
+    laravel-9-1:
+        driver: bridge
