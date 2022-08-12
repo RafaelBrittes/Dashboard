@@ -23,7 +23,7 @@ class ClientController extends Controller
 
         foreach ($csv as $csvRow) {
             //dd($csvRow);
-            Client::create([
+            $clientsToAdd[] = [
                 'id' => $csvRow['id'],
                 'first_name' => $csvRow['first_name'],
                 'last_name' => $csvRow['last_name'],
@@ -34,7 +34,14 @@ class ClientController extends Controller
                 'city' => $csvRow['city'],
                 'title' => $csvRow['title'],
                 'website' => $csvRow['website;']
-            ]);
+            ];
+
+            if (count($clientsToAdd) == 500) {
+                Client::insert($clientsToAdd);
+                $clientsToAdd = [];
+            }
         }
+
+        return $this->success("Clients added with success!");
     }
 }
