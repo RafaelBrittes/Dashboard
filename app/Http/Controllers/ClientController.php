@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use App\Traits\ApiResponser;
+use Illuminate\Http\Request;
 use League\Csv\Reader;
 use Illuminate\Support\Facades\Validator;
 
@@ -11,9 +12,10 @@ class ClientController extends Controller
 {
     use ApiResponser;
 
-    public function showClients()
+    public function showClients(Request $request)
     {
-        return Client::all();
+        $pageSize = $request->page_size ?? 15;
+        return Client::query()->paginate($pageSize);
     }
 
     public function importClients()
