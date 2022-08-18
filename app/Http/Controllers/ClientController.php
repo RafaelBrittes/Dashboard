@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
-use Illuminate\Http\Request;
 use App\Traits\ApiResponser;
 use League\Csv\Reader;
+use Illuminate\Support\Facades\Validator;
 
 class ClientController extends Controller
 {
@@ -22,7 +22,6 @@ class ClientController extends Controller
         $csv->setHeaderOffset(0);
 
         foreach ($csv as $csvRow) {
-            //dd($csvRow);
             $clientsToAdd[] = [
                 'id' => $csvRow['id'],
                 'first_name' => $csvRow['first_name'],
@@ -33,7 +32,7 @@ class ClientController extends Controller
                 'company' => $csvRow['company'],
                 'city' => $csvRow['city'],
                 'title' => $csvRow['title'],
-                'website' => $csvRow['website;']
+                'website' => ($csvRow['website;'] == ';') ? "" : $csvRow['website;']
             ];
 
             if (count($clientsToAdd) == 500) {
@@ -43,5 +42,30 @@ class ClientController extends Controller
         }
 
         return $this->success("Clients added with success!");
+    }
+
+    public function getClientsInfo()
+    {
+        $withoutLastName = count(Client::where('last_name', '=', '')->get());
+        $withoutGender = count(Client::where('gender', '=', '')->get());
+        $emails = Client::pluck('email');
+        $invalidEmails = 0;
+        $validEmails = count($emails);
+
+        foreach ($emails as $email) {
+            $data = ['email' => $email];
+            $rules = ['email' => 'required|email'];
+            $validator = Validator::make($data, $rules);
+            if ($validator->fails()) {
+                $invalidEmails++;
+                $validEmails--;
+            }
+        }
+        return ([
+            'Without last name' => $withoutLastName,
+            'Without gender' => $withoutGender,
+            'Valid emails' => $validEmails,
+            'Invalid emails' => $invalidEmails
+        ]);
     }
 }
