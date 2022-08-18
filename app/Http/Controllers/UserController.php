@@ -11,13 +11,15 @@ class UserController extends Controller
 {
     use ApiResponser;
 
-    public function showUser(){
+    public function showCurrentUser()
+    {
         return auth()->user();
     }
 
-    public function updateUser(Request $request){
-        User::where('id', $request->id)->update($request->all());
+    public function updateCurrentUser(Request $request)
+    {
         $user = auth()->user();
+        User::where('id', $user->id)->update($request->all());
 
         return $this->success("Successfully updated user ID {$user['id']}");
     }
