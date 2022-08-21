@@ -14,7 +14,7 @@ class ClientController extends Controller
 
     public function showClients(Request $request)
     {
-        $pageSize = $request->page_size ?? 15;
+        $pageSize = $request->page_size ?? 6;
         return Client::query()->paginate($pageSize);
     }
 
@@ -64,10 +64,10 @@ class ClientController extends Controller
             }
         }
         return ([
-            'Without last name' => $withoutLastName,
-            'Without gender' => $withoutGender,
-            'Valid emails' => $validEmails,
-            'Invalid emails' => $invalidEmails
+            'without_last_name' => $withoutLastName,
+            'without_gender' => $withoutGender,
+            'valid_emails' => $validEmails,
+            'invalid_emails' => $invalidEmails
         ]);
     }
 }
