@@ -18,9 +18,9 @@ class ClientController extends Controller
         return Client::query()->paginate($pageSize);
     }
 
-    public function importClients()
+    public function importClients(Request $request)
     {
-        $csv = Reader::createFromPath('../resources/customers.csv');
+        $csv = Reader::createFromPath($request->file('csv_file')->getRealPath());
         $csv->setHeaderOffset(0);
 
         foreach ($csv as $csvRow) {
