@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Client;
 use App\Traits\ApiResponser;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use League\Csv\Reader;
 use Illuminate\Support\Facades\Validator;
 
@@ -68,6 +69,15 @@ class ClientController extends Controller
             'without_gender' => $withoutGender,
             'valid_emails' => $validEmails,
             'invalid_emails' => $invalidEmails
+        ]);
+    }
+
+    public function donwloadCsvFile()
+    {
+        $path = Storage::disk('public')->path("customers.csv");
+        $content = file_get_contents($path);
+        return response($content)->withHeaders([
+            'Content-Type' => mime_content_type($path)
         ]);
     }
 }

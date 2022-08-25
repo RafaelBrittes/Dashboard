@@ -18,4 +18,5 @@ Route::middleware('auth:sanctum')->prefix('client')->group(function () {
     Route::get('/', [ClientController::class, 'showClients']);
     Route::post('/import', [ClientController::class, 'importClients']);
     Route::get('/infos', [ClientController::class, 'getClientsInfo']);
+    Route::get('/download', [ClientController::class, 'donwloadCsvFile']);
 });
